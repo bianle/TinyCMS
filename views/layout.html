@@ -1,0 +1,29 @@
+$def with (page, title="")
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
+  <head>
+    <title>Single Page Markdown CMS</title>
+  </head>
+  <body>
+ 
+<h1>
+Custom header here      
+</h1>
+ 
+    <ul>        
+$for item in pages:
+    $ attr = ''
+    $if ctx.path == item['link']:
+        $ attr=' id="current"'
+    <li$:(attr)><a href="$item['link']">$item['name']</a></li>
+$pass
+        </ul>
+     
+<hr/>
+$:page
+<hr/>    
+ 
+    Custom footer here 
+  </body>
+</html>
