@@ -13,7 +13,16 @@ import markdown2
 # pages is a list of dictionary: the value of key name represent the name\
 # of page, the value of link represent the routing pattern,
 # and content_file is the path of markdown file with the page content
-pages = []
+pages = [
+    { "name": "Home",
+      "link": "/", 
+      "content_file": "contents/home.md"
+    },
+    { "name": "Info",
+      "link": "/info.html", 
+      "content_file": "contents/info.md"
+    },
+    ]
  
 # this is the directory with static files (images, css, ...)
 static_dir = "public"
@@ -22,6 +31,13 @@ static_dir = "public"
 htmlview = web.template.render('views', cache=False, base="layout",\
    globals={'pages':pages, 'ctx': web.ctx})
  
+# generic controller for Markdown pages:
+class PageClassTemplate:
+    content_file = ""
+ 
+    def GET(self):
+        html = markdown2.markdown_path(self.content_file)
+        return htmlview.page(html)
  
 # Controller for static files
 class Public:
@@ -39,24 +55,12 @@ def mime_type(filename):
  
 # initialize the application
 myApp = web.application(mapping=(), fvars=globals())
-myApp.add_mapping('/refesh', 'Refesh')
-myApp.add_mapping('/([^\.]*)', 'Controller')
-
-class Controller:
-    def GET(self,key):
-        html = markdown2.markdown_path("contents/"+key+'.md')
-        return htmlview.page(html)
-
-class Refesh:
-    def GET(self):
-        import os
-        dir=  'contents'
-        files = os.listdir(dir) 
-        global pages 
-        for f in files:  
-            pages.append(f.replace('.md',''))
-        print pages
-        return 'success'
+ 
+for page in pages:
+    pattern = page["link"]
+    globals()[page["name"]] = type(page["name"],\
+   (PageClassTemplate,object,), dict(content_file=page["content_file"]))
+    myApp.add_mapping(pattern, page["name"])
  
 # add static file handler:
 try:

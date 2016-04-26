@@ -13,10 +13,7 @@ Custom header here
  
     <ul>        
 $for item in pages:
-    $ attr = ''
-    $if ctx.path == item['link']:
-        $ attr=' id="current"'
-    <li$:(attr)><a href="$item['link']">$item['name']</a></li>
+    <li><a href="$item">$item</a></li>
 $pass
         </ul>
      
